@@ -44,6 +44,11 @@ var getTimeMeasure = {
     },
     result: function result() {
         getTimeMeasure.time = getTimeMeasure.endTime - getTimeMeasure.startTime;
+        if (getTimeMeasure.time < 1000) {
+            getTimeMeasure.time = getTimeMeasure.time + ' ms';
+        } else {
+            getTimeMeasure.time = getTimeMeasure.time / 1000 + ' s';
+        }
         return getTimeMeasure.time;
     }
 
@@ -120,13 +125,12 @@ var SpecReporter = function (_events$EventEmitter) {
         });
 
         _this.on('test:start', function (test) {
-            timeMeasure.start();
+            this.timeMeasure.start();
         });
 
         _this.on('test:end', function (test) {
-            timeMeasure.end();
-            // Add result time to this.times object using test ID
-            _this.times[test.cid] = timeMeasure.result();
+            this.timeMeasure.end();
+            this.times[test.uid] = this.timeMeasure.result();
         });
 
         _this.on('test:fail', function (test) {
@@ -258,7 +262,8 @@ var SpecReporter = function (_events$EventEmitter) {
                     output += preface;
                     output += '   ' + indent;
                     output += this.chalk[this.getColor(test.state)](this.getSymbol(test.state));
-                    output += ' ' + testTitle + ' ' + this.times[testUid] + '\n'; // Add  this.times[testUid] time here
+                    output += ' ' + testTitle;
+                    output += ' ' + '(' + this.chalk['yellow'](this.times[testUid]) + ')' + '\n';
                 }
 
                 output += preface.trim() + '\n';
