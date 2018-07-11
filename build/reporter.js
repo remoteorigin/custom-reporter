@@ -30,6 +30,22 @@ var DURATION_OPTIONS = {
     units: ['m', 's'],
     round: true,
     spacer: ''
+};
+
+var getTimeMeasure = {
+    time: 0,
+    startTime: 0,
+    endTime: 0,
+    start: function start() {
+        getTimeMeasure.startTime = new Date().getTime();
+    },
+    end: function end() {
+        getTimeMeasure.endTime = new Date().getTime();
+    },
+    result: function result() {
+        getTimeMeasure.time = getTimeMeasure.endTime - getTimeMeasure.startTime;
+        return getTimeMeasure.time;
+    }
 
     /**
      * Initialize a new `spec` test reporter.
@@ -75,6 +91,10 @@ var SpecReporter = function (_events$EventEmitter) {
         _this.suiteIndents = {};
         _this.specs = {};
         _this.results = {};
+        _this.timeMeasure = getTimeMeasure();
+        //Object for test cases time
+
+        _this.times = {};
 
         _this.on('runner:start', function (runner) {
             this.suiteIndents[runner.cid] = {};
@@ -97,6 +117,16 @@ var SpecReporter = function (_events$EventEmitter) {
 
         _this.on('test:pass', function (test) {
             this.results[test.cid].passing++;
+        });
+
+        _this.on('test:start', function (test) {
+            timeMeasure.start();
+        });
+
+        _this.on('test:end', function (test) {
+            timeMeasure.end();
+            // Add result time to this.times object using test ID
+            _this.times[test.cid] = timeMeasure.result();
         });
 
         _this.on('test:fail', function (test) {
@@ -228,7 +258,7 @@ var SpecReporter = function (_events$EventEmitter) {
                     output += preface;
                     output += '   ' + indent;
                     output += this.chalk[this.getColor(test.state)](this.getSymbol(test.state));
-                    output += ' ' + testTitle + '\n';
+                    output += ' ' + testTitle + ' ' + this.times[testUid] + '\n'; // Add  this.times[testUid] time here
                 }
 
                 output += preface.trim() + '\n';
