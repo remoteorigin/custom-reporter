@@ -91,7 +91,7 @@ var SpecReporter = function (_events$EventEmitter) {
         _this.suiteIndents = {};
         _this.specs = {};
         _this.results = {};
-        _this.timeMeasure = getTimeMeasure();
+        _this.timeMeasure = getTimeMeasure;
         //Object for test cases time
 
         _this.times = {};
