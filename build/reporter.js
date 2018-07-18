@@ -125,12 +125,15 @@ var SpecReporter = function (_events$EventEmitter) {
         });
 
         _this.on('test:start', function (test) {
-            this.timeMeasure.start();
+            console.log('------------------------------------------------------------------');
+            console.log(_this.chalk.bold(test.title), '\n');
+            _this.timeMeasure.start();
         });
 
         _this.on('test:end', function (test) {
-            this.timeMeasure.end();
-            this.times[test.uid] = this.timeMeasure.result();
+            _this.timeMeasure.end();
+            _this.times[test.uid] = _this.timeMeasure.result();
+            console.log('\nTest case finished in', _this.chalk.yellow(_this.timeMeasure.result(), '\n'));
         });
 
         _this.on('test:fail', function (test) {
@@ -205,7 +208,8 @@ var SpecReporter = function (_events$EventEmitter) {
         value: function getBrowserCombo(caps) {
             var verbose = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
-            var device = caps.deviceName;
+            var device = caps.deviceId;
+            var deviceName = caps.deviceName;
             var browser = caps.browserName || caps.browser;
             var version = caps.version || caps.platformVersion || caps.browser_version;
             var platform = caps.os ? caps.os + ' ' + caps.os_version : caps.platform || caps.platformName;
@@ -225,7 +229,7 @@ var SpecReporter = function (_events$EventEmitter) {
             }
 
             if (!verbose) {
-                return (browser + ' ' + (version || '') + ' ' + (platform || '')).trim();
+                return (deviceName + ' ').trim();
             }
 
             return browser + (version ? ` (v${version})` : '') + (platform ? ` on ${platform}` : '');
