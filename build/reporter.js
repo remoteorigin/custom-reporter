@@ -125,7 +125,7 @@ var SpecReporter = function (_events$EventEmitter) {
         });
 
         _this.on('test:start', function (test) {
-            console.log('------------------------------------------------------------------');
+            console.log('------------------------------------------------------------------\n');
             console.log(_this.chalk.bold(test.title), '\n');
             _this.timeMeasure.start();
         });
